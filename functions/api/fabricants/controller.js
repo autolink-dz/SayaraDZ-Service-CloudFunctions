@@ -57,14 +57,17 @@ const updateCarProvider = (req,res)=>{
 
 const deleteCarProvider = (req,res)=>{
     const uid = req.params.ID_FABRIQUANT
-
-    return admin.firestore().collection("fabricants")
-                    .doc(uid)
-                    .delete()
-                    .then((result) => {
+    return admin.auth().deleteUser(uid)
+                .then((result)=>{
+                        return admin.firestore().collection("fabricants")
+                                    .doc(uid)
+                                    .delete()})
+                .then((result) => {
                         res.json({uid}).status(200)
                         return 0;
-                    })
+                })
+            
+   
 };
 
 
