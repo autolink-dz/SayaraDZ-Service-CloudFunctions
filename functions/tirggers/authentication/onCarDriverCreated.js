@@ -7,13 +7,12 @@ const admin = require("firebase-admin")
 const onCarDriverCreated = (user)=>{
     const email = user.email;
     const uid = user.uid;
-    const photoUrl  = user.photoUrl;
+    const photoUrl  = user.photoUrl; 
     const name = user.displayName;
     
-
-    console.log("Creating user document for user with email: "+email);
-    
+    admin.auth().setCustomUserClaims(uid, {automobiliste: true})
     return admin.firestore().collection("automobilistes").doc(uid).set({
+        uid,
         email,
         name,
         photoUrl,

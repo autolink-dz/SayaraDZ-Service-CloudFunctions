@@ -3,20 +3,27 @@ const admin = require("firebase-admin");
 
 
 const getCarProviders = (req,res)=>{
-    var data = [];
-
-
-    return admin.firestore().collection("fabricants")
+   let data = [];
+   const next  = req.query.next 
+   const page = req.query.page || 20
+   const id_marque  = req.query.id_marque || null
+  
+   ref = admin.firestore().collection("fabricants").orderBy("uid")
+   if (next != 0) ref = ref.startAfter(next)
+    
+    return ref.limit(page)
             .get()
             .then(snapshot => {
-            
-                snapshot.forEach(doc => {
-                    data.push({
-                        id: doc.id,
-                        data:doc.data()
-                    })
-                })
-                res.json(data).status(200)
+                snapshot.docs.filter(doc => id_marque ? doc.data().id_marque == id_marque : true)
+                        .forEach(doc => {
+                            data.push({
+                                id: doc.id,
+                                data:doc.data()
+                            })
+                        })
+
+                let next  = snapshot.docs[snapshot.size-1].id
+                res.json({next,data}).status(200)
                 return 0;
             })
             
@@ -40,6 +47,7 @@ const getCarProvider  = (req,res)=>{
                     })
                     
 }
+
 
 const updateCarProvider = (req,res)=>{
     const uid = req.params.ID_FABRIQUANT
@@ -66,8 +74,6 @@ const deleteCarProvider = (req,res)=>{
                         res.json({uid}).status(200)
                         return 0;
                 })
-            
-   
 };
 
 

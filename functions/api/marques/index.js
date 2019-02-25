@@ -1,23 +1,15 @@
 const marques = require("express").Router()
+const controller = require("./controller")
 
-marques.get("/",(req,res)=>{
-    res.status(403).send('hellow world');
-});
 
-marques.get("/:ID_MARQUE",(req,res)=>{
-    
-});
+marques.get("/",controller.getBrands);
 
-marques.post("/:ID_MARQUE",(req,res)=>{
-    
-});
+marques.get("/:ID_MARQUE",controller.getBrand);
 
-marques.put("/:ID_MARQUE",(req,res)=>{
-    
-})
+marques.post("/",controller.setBrand);
 
-marques.delete("/:ID_MARQUE",(req,res)=>{
-    
-})
+marques.put("/:ID_MARQUE",controller.updateBrand)
+
+marques.delete("/:ID_MARQUE",controller.deleteBrand)
 
 module.exports = marques;
