@@ -10,7 +10,7 @@ admin.get("/",(req,res)=>{
                 res.json({admin: decodedToken.admin || false}).status(200)
                 return 0;
             }).catch((error)=>{
-                res.json({}).status(500)
+                res.status(500).json({admin: false})
                 return 0;
             });            
 

@@ -7,20 +7,19 @@ const getBrands = (req,res)=>{
    const next  = req.query.next 
    const page = req.query.page || 20
   
-   ref = admin.firestore().collection("marques").orderBy("id")
+   ref = admin.firestore().collection("marques")
+                          .orderBy("nom")
+                          .orderBy("id")
    if (next != 0) ref = ref.startAfter(next)
     
     return ref.limit(page)
             .get()
             .then(snapshot => {
                 snapshot.docs.forEach(doc => {
-                            data.push({
-                                id: doc.id,
-                                data:doc.data()
-                            })
+                            data.push(doc.data())
                         })
-
-                let next  = snapshot.docs[snapshot.size-1].id
+                
+                let next  = snapshot.size > 0 ? snapshot.docs[snapshot.size-1].id : null
                 res.json({next,data}).status(200)
                 return 0;
             })
@@ -34,12 +33,7 @@ const getBrand  = (req,res)=>{
                     .doc(id)
                     .get()
                     .then(doc => {
-                            var data = {
-                                id: doc.id,
-                                data:doc.data()
-                            }
-
-                        res.json(data).status(200)
+                        res.json(doc.data()).status(200)
                         return 0;
                     })
                     
@@ -47,13 +41,14 @@ const getBrand  = (req,res)=>{
 
 const updateBrand= (req,res)=>{
     const id = req.params.ID_MARQUE
-    const body  = req.body
+    const data  = req.body
 
     return admin.firestore().collection("marques")
                     .doc(id)
-                    .update(body)
+                    .update(data)
                     .then((result) => {
-                        res.json({id, data: body}).status(200)
+                        data.id = id
+                        res.json(data).status(200)
                         return 0;
                     })
                   
@@ -69,7 +64,8 @@ const setBrand= (req,res)=>{
                     .doc(ref.id)
                     .set(body)
                     .then((ref) => {
-                        res.json({id: ref.id, data: body}).status(200)
+                        body.id = ref.id 
+                        res.json(body).status(200)
                         return 0;
                     })
                   

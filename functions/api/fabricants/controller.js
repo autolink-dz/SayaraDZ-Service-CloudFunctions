@@ -8,21 +8,19 @@ const getCarProviders = (req,res)=>{
    const page = req.query.page || 20
    const id_marque  = req.query.id_marque || null
   
-   ref = admin.firestore().collection("fabricants").orderBy("uid")
+   ref = admin.firestore().collection("fabricants")
+            
+   if (id_marque) ref = ref.where("id_marque","==",id_marque); else  ref = ref.orderBy("id_marque")
+   ref  = ref.orderBy("id")
    if (next != 0) ref = ref.startAfter(next)
-    
     return ref.limit(page)
             .get()
             .then(snapshot => {
-                snapshot.docs.filter(doc => id_marque ? doc.data().id_marque == id_marque : true)
-                        .forEach(doc => {
-                            data.push({
-                                id: doc.id,
-                                data:doc.data()
-                            })
+                snapshot.docs.forEach(doc => {
+                            data.push(doc.data())
                         })
 
-                let next  = snapshot.docs[snapshot.size-1].id
+                let next  = snapshot.size > 0 ? snapshot.docs[snapshot.size-1].id : null
                 res.json({next,data}).status(200)
                 return 0;
             })
@@ -36,13 +34,7 @@ const getCarProvider  = (req,res)=>{
                     .doc(uid)
                     .get()
                     .then(doc => {
-            
-                            var data = {
-                                id: doc.id,
-                                data:doc.data()
-                            }
-
-                        res.json(data).status(200)
+                        res.json(doc.data()).status(200)
                         return 0;
                     })
                     
@@ -57,7 +49,8 @@ const updateCarProvider = (req,res)=>{
                     .doc(uid)
                     .update(body)
                     .then((result) => {
-                        res.json({id: uid, data: body}).status(200)
+                        body.id = uid 
+                        res.json(body).status(200)
                         return 0;
                     })
                   
@@ -71,7 +64,7 @@ const deleteCarProvider = (req,res)=>{
                                     .doc(uid)
                                     .delete()})
                 .then((result) => {
-                        res.json({uid}).status(200)
+                        res.json({id:uid}).status(200)
                         return 0;
                 })
 };

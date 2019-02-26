@@ -12,7 +12,7 @@ const onCarDriverCreated = (user)=>{
     
     admin.auth().setCustomUserClaims(uid, {automobiliste: true})
     return admin.firestore().collection("automobilistes").doc(uid).set({
-        uid,
+        id:uid,
         email,
         name,
         photoUrl,

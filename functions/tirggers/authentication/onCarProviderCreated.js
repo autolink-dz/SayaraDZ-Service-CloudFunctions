@@ -16,7 +16,7 @@ const onCarProviderCreated = (user)=>{
 
     admin.auth().setCustomUserClaims(uid, {fabricant: true})
     return admin.firestore().collection("fabricants").doc(uid).set({
-        uid,
+        id:uid,
         email,
         nom,
         prenom,
