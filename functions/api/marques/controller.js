@@ -6,24 +6,33 @@ const getBrands = (req,res)=>{
    let data = [];
    const next  = req.query.next 
    const page = req.query.page || 20
-  
-   ref = admin.firestore().collection("marques")
-                          .orderBy("nom")
-                          .orderBy("id")
-   if (next != 0) ref = ref.startAfter(next)
-    
-    return ref.limit(page)
-            .get()
-            .then(snapshot => {
-                snapshot.docs.forEach(doc => {
-                            data.push(doc.data())
-                        })
-                
-                let next  = snapshot.size > 0 ? snapshot.docs[snapshot.size-1].id : null
-                res.json({next,data}).status(200)
-                return 0;
-            })
-            
+   let snapshotPromise;
+
+    if(next != 0 ){
+        snapshotPromise = admin.firestore().collection("marques")
+                                           .doc(next)
+                                           .get()
+                                           .then(doc => {
+                                                return admin.firestore().collection("marques")
+                                                            .orderBy("nom")
+                                                            .startAfter(doc)
+                                                            .limit(parseInt(page))
+                                                            .get()})
+    }else{
+        snapshotPromise =  admin.firestore().collection("marques")
+                                            .orderBy("nom")
+                                            .limit(parseInt(page))
+                                            .get()
+    }
+    return  snapshotPromise.then(snapshot => {
+                                    snapshot.docs.forEach(doc => {
+                                                data.push(doc.data())
+                                            })
+                                    
+                                    let next  = snapshot.size > 0 ? snapshot.docs[snapshot.size-1].id : null
+                                    res.json({next,data}).status(200)
+                                    return 0;
+                                })
            
     }
 const getBrand  = (req,res)=>{
@@ -63,8 +72,7 @@ const setBrand= (req,res)=>{
     return admin.firestore().collection("marques")
                     .doc(ref.id)
                     .set(body)
-                    .then((ref) => {
-                        body.id = ref.id 
+                    .then((result) => {
                         res.json(body).status(200)
                         return 0;
                     })

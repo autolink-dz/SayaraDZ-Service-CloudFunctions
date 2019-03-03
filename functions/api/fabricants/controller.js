@@ -40,7 +40,6 @@ const getCarProvider  = (req,res)=>{
                     
 }
 
-
 const updateCarProvider = (req,res)=>{
     const uid = req.params.ID_FABRIQUANT
     const body  = req.body
@@ -68,7 +67,6 @@ const deleteCarProvider = (req,res)=>{
                         return 0;
                 })
 };
-
 
 module.exports = {getCarProviders,
                   getCarProvider,
