@@ -4,6 +4,8 @@ const controller = require("./controller")
 
 fabricants.get("/",controller.getCarProviders);
 
+fabricants.post("/",controller.setCarProvider);
+
 fabricants.get("/:ID_FABRIQUANT",controller.getCarProvider);
 
 fabricants.put("/:ID_FABRIQUANT",controller.updateCarProvider)

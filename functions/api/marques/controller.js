@@ -35,8 +35,11 @@ const getBrands = (req,res)=>{
                                 })
            
     }
+
 const getBrand  = (req,res)=>{
     const id = req.params.ID_MARQUE
+    console.log("here with token");
+    
     
    return admin.firestore().collection("marques")
                     .doc(id)
@@ -71,7 +74,11 @@ const setBrand= (req,res)=>{
     body.id = ref.id
     return admin.firestore().collection("marques")
                     .doc(ref.id)
-                    .set(body)
+                    .set({
+                        id: body.id,
+                        nom: body.nom,
+                        url: body.url
+                    })
                     .then((result) => {
                         res.json(body).status(200)
                         return 0;

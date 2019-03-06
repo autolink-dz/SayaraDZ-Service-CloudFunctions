@@ -61,7 +61,7 @@ describe("/marques", function() {
              });
         });
     });
-/*
+
     describe("DELETE /marques", function() {
         it("returns status code 200", function(done) {
             request.post(base_url, {form: post_brand } ,function(error, response, body) {
@@ -75,7 +75,7 @@ describe("/marques", function() {
              });
         });
     });
-    */
+    
 
     describe("UPDATE /marques", function() {
         it("returns status code 200", function(done) {

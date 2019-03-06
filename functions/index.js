@@ -10,7 +10,6 @@ const cors  = require("cors")
 const auth  = require('./auth');
 const api  = require('./api/api');
 const onCarDriverCreated = require("./tirggers/authentication/onCarDriverCreated")
-const onCarProviderCreated = require("./tirggers/authentication/onCarProviderCreated")
 
 //intialize the firebase admin sdk
 admin.initializeApp(functions.config().firebase);
@@ -23,7 +22,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 //Authentication middlware.
-//app.use(auth);
+app.use(auth);
 app.use("/api/v1",api);
 
 /**
@@ -37,5 +36,5 @@ exports.sayaraDzApi = functions.https.onRequest(app);
  */
 exports.authenticationTrigger = functions.auth.user().onCreate((user) => {
 
-    return user.providerData[0].providerId === "password" ? onCarProviderCreated(user) : onCarDriverCreated(user);
+    return user.providerData[0].providerId != "password" ? 0: onCarDriverCreated(user);
 });
