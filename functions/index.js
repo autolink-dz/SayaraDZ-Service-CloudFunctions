@@ -10,6 +10,7 @@ const cors  = require("cors")
 const auth  = require('./auth');
 const api  = require('./api/api');
 const onCarDriverCreated = require("./tirggers/authentication/onCarDriverCreated")
+const createThumbnail = require("./tirggers/storage/createThumbnail")
 
 //intialize the firebase admin sdk
 admin.initializeApp(functions.config().firebase);
@@ -38,3 +39,13 @@ exports.authenticationTrigger = functions.auth.user().onCreate((user) => {
 
     return user.providerData[0].providerId != "password" ? 0: onCarDriverCreated(user);
 });
+
+
+/**
+ * SayaraDZ resources upload triggers module
+ */
+exports.storageTrigger = functions.storage.object().onFinalize((object)=>{
+    if (object.name.startsWith('images/')) createThumbnail(object)
+  
+
+})
