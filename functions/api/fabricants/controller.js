@@ -34,7 +34,7 @@ const getCarProviders = (req,res)=>{
                         })
 
                 let next  = snapshot.size > 0 ? snapshot.docs[snapshot.size-1].id : null
-                res.json({next,data}).status(200)
+                res.status(200).json({next,data})
                 return 0;
             })
             
@@ -48,7 +48,7 @@ const getCarProvider  = (req,res)=>{
                     .doc(id)
                     .get()
                     .then(doc => {
-                        res.json(doc.data()).status(200)
+                        res.status(200).json(doc.data())
                         return 0;
                     })
                     
@@ -72,7 +72,7 @@ const updateCarProvider = (req,res)=>{
                             })
                         }})
                     .then((result)=>{
-                            res.json(body).status(200)
+                            res.status(200).json(body)
                                 return 0;
                     })
                     
@@ -104,6 +104,7 @@ const setCarProvider = (req,res)=>{
         id_marque: body.id_marque,
         disabled: false
     }
+    
 
     return admin.auth().createUser({
             email: user.email,
@@ -116,7 +117,7 @@ const setCarProvider = (req,res)=>{
                         .doc(user.id)
                         .set(user)
             .then((result) => {
-                res.json(user).status(200)
+                res.status(200).json(user)
                 return 0;
             })})
 }

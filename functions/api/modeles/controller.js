@@ -31,7 +31,7 @@ const getModels = (req,res)=>{
                                              })
                                      
                                      let next  = snapshot.size > 0 ? snapshot.docs[snapshot.size-1].id : null
-                                     res.json({next,data}).status(200)
+                                     res.status(200).json({next,data})
                                      return 0;
                                  })
             
@@ -44,7 +44,7 @@ const getModel  = (req,res)=>{
                         .doc(id)
                         .get()
                         .then(doc => {
-                            res.json(doc.data()).status(200)
+                            res.status(200).json(doc.data())
                             return 0;
                         })
                         
@@ -59,7 +59,7 @@ const updateModel= (req,res)=>{
                     .update(data)
                     .then((result) => {
                         data.id = id
-                        res.json(data).status(200)
+                        res.status(200).json(data)
                         return 0;
                     })
                   
@@ -93,9 +93,9 @@ const setModel= (req,res)=>{
                         })
                     ).then((result) => {
                         if(result.size ==0)
-                          res.json({error: "model aleardy exist"}).status(500)
+                          res.status(500).json({error: "model aleardy exist"})
                         else 
-                          res.json(data).status(200)
+                          res.status(200).json(data)
                     
                        return 0;
                     })
@@ -115,7 +115,7 @@ const deleteModel = (req,res)=>{
                           //delete the options tarifs
                           //delete the colors  tarifs
                           //delete the versions tarifs
-                        res.json({id}).status(200)
+                        res.status(200).json({id})
                         return 0;
                      })
 };

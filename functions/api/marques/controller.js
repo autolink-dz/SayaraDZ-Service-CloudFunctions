@@ -29,7 +29,7 @@ const getBrands = (req,res)=>{
                                             })
                                     
                                     let next  = snapshot.size > 0 ? snapshot.docs[snapshot.size-1].id : null
-                                    res.json({next,data}).status(200)
+                                    res.status(200).json({next,data})
                                     return 0;
                                 })
            
@@ -42,7 +42,7 @@ const getBrand  = (req,res)=>{
                     .doc(id)
                     .get()
                     .then(doc => {
-                        res.json(doc.data()).status(200)
+                        res.status(200).json(doc.data())
                         return 0;
                     })
                     
@@ -57,7 +57,7 @@ const updateBrand= (req,res)=>{
                     .update(data)
                     .then((result) => {
                         data.id = id
-                        res.json(data).status(200)
+                        res.status(200).json(data)
                         return 0;
                     })
                   
@@ -82,10 +82,10 @@ const setBrand= (req,res)=>{
                         return ref.set(data)
                        }
                    }).then((result) => {
-                        if(result.size ==0)
-                          res.json({error: "brand aleardy exist"}).status(500)
+                        if(result.size > 0)
+                          res.status(500).json({error: "brand aleardy exist"})
                         else 
-                          res.json(data).status(200)
+                          res.status(200).json(data)
                     
                        return 0;
                     })

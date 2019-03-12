@@ -31,7 +31,7 @@ const getVersions = (req,res)=>{
                                              })
                                      
                                      let next  = snapshot.size > 0 ? snapshot.docs[snapshot.size-1].id : null
-                                     res.json({next,data}).status(200)
+                                     res.status(200).json({next,data})
                                      return 0;
                                  })
             
@@ -47,7 +47,7 @@ const getVersion  = (req,res)=>{
                         .doc(versionID)
                         .get()
                         .then(doc => {
-                            res.json(doc.data()).status(200)
+                            res.status(200).json(doc.data())
                             return 0;
                         })
     }
@@ -64,7 +64,7 @@ const updateVersion= (req,res)=>{
                         .update(data)
                         .then((result) => {
                             data.id = versionID
-                            res.json(data).status(200)
+                            res.status(200).json(data)
                             return 0;
                         })
                       
@@ -106,9 +106,9 @@ const setVersion= (req,res)=>{
                             }
                         }).then((result) => {
                             if(result.size ==0)
-                              res.json({error: "version aleardy exist"}).status(500)
+                              res.status(500).json({error: "version aleardy exist"})
                             else 
-                              res.json(data).status(200)
+                              res.status(200).json(data)
                         
                            return 0;
                         })    
@@ -124,7 +124,7 @@ const deleteVersion = (req,res)=>{
                          .doc(versionID)
                          .delete()
                          .then(()=>{
-                            res.json({versionID}).status(200)
+                            res.status(200).json({versionID})
                             return 0;
                          })
     };

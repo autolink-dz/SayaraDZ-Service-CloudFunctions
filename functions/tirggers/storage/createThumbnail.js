@@ -74,21 +74,24 @@ const createThumbnail = (object)=>{
                         let key = fileName.split(".")[0]
                         switch (resDirectoryName) {
                             
-                            case "versions":
+                            case "versions":{
                                     let modelID = key.split("_")[0]
                                     let versionID = key.split("_")[1]
                                     ref = admin.firestore().collection("modeles").doc(modelID)
                                                                 .collection("version")
                                                                 .doc(versionID)
                                 break;
+                            }
                             
-                            case "modeles":
+                            case "modeles":{
                                     ref = admin.firestore().collection("modeles").doc(key)
                                 break;
+                            }
                             
-                            case "marque":
+                            case "marque":{
                                     ref = admin.firestore().collection("marque").doc(key)
                                 break;
+                            }
                             
                             default:
                                 break;
