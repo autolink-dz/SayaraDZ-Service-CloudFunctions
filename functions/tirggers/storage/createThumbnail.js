@@ -72,21 +72,29 @@ const createThumbnail = (object)=>{
                         let ref;
                         let resDirectoryName  = filePath.split('/')[1]
                         let key = fileName.split(".")[0]
-                        if(resDirectoryName == "versions") {
-                            let modelID = key.split("_")[0]
-                            let versionID = key.split("_")[1]
-                            ref = admin.firestore().collection("modeles").doc(modelID)
-                                                        .collection("version")
-                                                        .doc(versionID)
-                                                        
-                        
-                        }else{
-                            let collectionType = resDirectoryName
-                            let documentId = key
-                            ref = admin.firestore().collection(collectionType).doc(documentId)
+                        switch (resDirectoryName) {
+                            
+                            case "versions":
+                                    let modelID = key.split("_")[0]
+                                    let versionID = key.split("_")[1]
+                                    ref = admin.firestore().collection("modeles").doc(modelID)
+                                                                .collection("version")
+                                                                .doc(versionID)
+                                break;
+                            
+                            case "modeles":
+                                    ref = admin.firestore().collection("modeles").doc(key)
+                                break;
+                            
+                            case "marque":
+                                    ref = admin.firestore().collection("marque").doc(key)
+                                break;
+                            
+                            default:
+                                break;
                         }
-                        console.log("the image url is"+url);
-                        
+                
+    
                         return ref.update({ url: url.pop() })  
                     })
                 }
