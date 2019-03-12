@@ -23,7 +23,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 //Authentication middlware.
-//app.use(auth);
+app.use(auth);
 app.use("/api/v1",api);
 
 /**

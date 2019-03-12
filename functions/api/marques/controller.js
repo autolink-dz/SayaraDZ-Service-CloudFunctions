@@ -1,7 +1,6 @@
 const admin = require("firebase-admin");
 
 
-
 const getBrands = (req,res)=>{
    let data = [];
    const next  = req.query.next 
@@ -38,8 +37,6 @@ const getBrands = (req,res)=>{
 
 const getBrand  = (req,res)=>{
     const id = req.params.ID_MARQUE
-    console.log("here with token");
-    
     
    return admin.firestore().collection("marques")
                     .doc(id)
@@ -69,20 +66,33 @@ const updateBrand= (req,res)=>{
 const setBrand= (req,res)=>{
 
     const body  = req.body
-    const ref  = admin.firestore().collection("marques").doc()
+    const data  = {
+        nom: body.nom,
+        url: body.url }
 
-    body.id = ref.id
     return admin.firestore().collection("marques")
-                    .doc(ref.id)
-                    .set({
-                        id: body.id,
-                        nom: body.nom,
-                        url: body.url
-                    })
-                    .then((result) => {
-                        res.json(body).status(200)
+                   .where("nom","==",body.nom)
+                   .get((snapshot)=>{
+                       
+                    if(snapshot.size > 0){
                         return 0;
+                       }else{
+                        let ref  = admin.firestore().collection("marques").doc()
+                        data.id = ref.id
+                        return ref.set(data)
+                       }
+                   }).then((result) => {
+                        if(result.size ==0)
+                          res.json({error: "brand aleardy exist"}).status(500)
+                        else 
+                          res.json(data).status(200)
+                    
+                       return 0;
                     })
+
+   
+
+        
                   
 }
 

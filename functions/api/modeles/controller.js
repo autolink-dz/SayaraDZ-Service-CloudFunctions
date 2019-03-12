@@ -68,9 +68,7 @@ const updateModel= (req,res)=>{
 const setModel= (req,res)=>{
 
     const body  = req.body
-    const ref  = admin.firestore().collection("modeles").doc()
-    
-    body.id = ref.id
+   
     const data  = {
                     id: body.id,
                     nom: body.nom,
@@ -79,11 +77,29 @@ const setModel= (req,res)=>{
                     options: body.options || null,
                     colors: body.colors  || null}
 
-    return ref.set(data)
-                    .then((result) => {
-                        res.json(data).status(200)
-                        return 0;
-                    })          
+    return admin.firestore().collection("modeles")
+                    .where("id_marque","==",data.id_marque)
+                    .where("nom","==",data.nom)
+                    .get((snapshot =>{
+                      
+                        if(snapshot.size > 0){
+                            return 0;
+                           }else{
+                            
+                            let ref  = admin.firestore().collection("modeles").doc()
+                            data.id = ref.id
+                            return ref.set(data) 
+                           }
+                        })
+                    ).then((result) => {
+                        if(result.size ==0)
+                          res.json({error: "model aleardy exist"}).status(500)
+                        else 
+                          res.json(data).status(200)
+                    
+                       return 0;
+                    })
+                   
 }
 
 

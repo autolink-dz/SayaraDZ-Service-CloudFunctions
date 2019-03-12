@@ -75,12 +75,7 @@ const setVersion= (req,res)=>{
         const body  = req.body
         const modelID   = req.ID_MODELE
 
-        console.log(req.params);
         
-        const ref  = admin.firestore().collection("modeles")
-                            .doc(modelID)
-                            .collection("versions")
-                            .doc()
         
         const data = {
             id: ref.id,
@@ -91,11 +86,32 @@ const setVersion= (req,res)=>{
             colors: body.colors  || null
           }
 
-        return ref.set(data)
-                        .then((result) => {
-                            res.json(data).status(200)
-                            return 0;
-                        })          
+        return admin.firestore().collection("modeles")
+                        .doc(modelID)
+                        .collection("versions")
+                        .where("nom","==",body.nom)
+                        .get((snapshot)=>{
+                           
+                            if(snapshot.size > 0){
+                                return 0;
+                            
+                            }else{
+                                const ref  = admin.firestore().collection("modeles")
+                                                .doc(modelID)
+                                                .collection("versions")
+                                                .doc()
+                                data.id = ref.id
+                                return ref.set(data)
+                            
+                            }
+                        }).then((result) => {
+                            if(result.size ==0)
+                              res.json({error: "version aleardy exist"}).status(500)
+                            else 
+                              res.json(data).status(200)
+                        
+                           return 0;
+                        })    
     }
 
 const deleteVersion = (req,res)=>{
