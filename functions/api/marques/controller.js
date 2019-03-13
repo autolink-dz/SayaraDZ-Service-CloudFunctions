@@ -72,17 +72,19 @@ const setBrand= (req,res)=>{
 
     return admin.firestore().collection("marques")
                    .where("nom","==",body.nom)
-                   .get((snapshot)=>{
+                   .get()
+                   .then(snapshot=>{
                        
                     if(snapshot.size > 0){
                         return 0;
-                       }else{
+                    }else{
                         let ref  = admin.firestore().collection("marques").doc()
                         data.id = ref.id
                         return ref.set(data)
-                       }
+                    }
                    }).then((result) => {
-                        if(result.size > 0)
+                        
+                        if(result == 0)
                           res.status(500).json({error: "brand aleardy exist"})
                         else 
                           res.status(200).json(data)

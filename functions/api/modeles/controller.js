@@ -75,24 +75,25 @@ const setModel= (req,res)=>{
                     url: body.url,
                     id_marque: body.id_marque,
                     options: body.options || null,
-                    colors: body.colors  || null}
+                    couleurs: body.couleurs  || null}
 
     return admin.firestore().collection("modeles")
                     .where("id_marque","==",data.id_marque)
                     .where("nom","==",data.nom)
-                    .get((snapshot =>{
+                    .get()
+                    .then(snapshot =>{
                       
                         if(snapshot.size > 0){
                             return 0;
-                           }else{
+                        }else{
                             
                             let ref  = admin.firestore().collection("modeles").doc()
                             data.id = ref.id
                             return ref.set(data) 
                            }
                         })
-                    ).then((result) => {
-                        if(result.size ==0)
+                    .then((result) => {
+                        if(result ==0)
                           res.status(500).json({error: "model aleardy exist"})
                         else 
                           res.status(200).json(data)
