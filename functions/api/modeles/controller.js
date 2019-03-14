@@ -4,12 +4,12 @@ const admin = require("firebase-admin");
 const getModels = (req,res)=>{
     const next  = req.query.next 
     const page = req.query.page || 20
-    const brand  = req.query.brand
+    const id_marque  = req.query.id_marque
     let data = [];
     let snapshotPromise;
     let ref = admin.firestore().collection("modeles");
    
-    if(brand) ref = ref.where("id_marque","==",brand)
+    if(id_marque) ref = ref.where("id_marque","==",id_marque)
  
     if(next != 0 ){
          snapshotPromise = admin.firestore().collection("modeles")
@@ -34,6 +34,10 @@ const getModels = (req,res)=>{
                                      res.status(200).json({next,data})
                                      return 0;
                                  })
+                                 .catch((err)=>{
+                                    res.status(500).send(err)
+                                    return 0;
+                                })
             
      }
  
@@ -45,6 +49,10 @@ const getModel  = (req,res)=>{
                         .get()
                         .then(doc => {
                             res.status(200).json(doc.data())
+                            return 0;
+                        })
+                        .catch((err)=>{
+                            res.status(500).send(err)
                             return 0;
                         })
                         
@@ -62,6 +70,10 @@ const updateModel= (req,res)=>{
                         res.status(200).json(data)
                         return 0;
                     })
+                    .catch((err)=>{
+                        res.status(500).send(err)
+                        return 0;
+                    })
                   
 }
 
@@ -70,7 +82,6 @@ const setModel= (req,res)=>{
     const body  = req.body
    
     const data  = {
-                    id: body.id,
                     nom: body.nom,
                     url: body.url,
                     id_marque: body.id_marque,
@@ -100,6 +111,10 @@ const setModel= (req,res)=>{
                     
                        return 0;
                     })
+                    .catch((err)=>{
+                        res.status(500).send(err)
+                        return 0;
+                    })
                    
 }
 
@@ -119,6 +134,10 @@ const deleteModel = (req,res)=>{
                         res.status(200).json({id})
                         return 0;
                      })
+                     .catch((err)=>{
+                        res.status(500).send(err)
+                        return 0;
+                    })
 };
 
 

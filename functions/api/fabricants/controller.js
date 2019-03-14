@@ -22,6 +22,10 @@ const getCarProviders = (req,res)=>{
                 res.status(200).json({data})
                 return 0;
             })
+            .catch((err)=>{
+                res.status(500).send(err)
+                return 0;
+            })
             
            
     }
@@ -34,6 +38,10 @@ const getCarProvider  = (req,res)=>{
                     .get()
                     .then(doc => {
                         res.status(200).json(doc.data())
+                        return 0;
+                    })
+                    .catch((err)=>{
+                        res.status(500).send(err)
                         return 0;
                     })
                     
@@ -60,6 +68,10 @@ const updateCarProvider = (req,res)=>{
                             res.status(200).json(body)
                                 return 0;
                     })
+                    .catch((err)=>{
+                        res.status(500).send(err)
+                        return 0;
+                    })
                     
                   
 }
@@ -76,7 +88,11 @@ const deleteCarProvider = (req,res)=>{
                  .then(()=>{
                     res.json({id}).status(200)
                     return 0;
-                 })
+                 }) 
+                 .catch((err)=>{
+                    res.status(500).send(err)
+                    return 0;
+                })
 };
 
 const setCarProvider = (req,res)=>{
@@ -110,7 +126,7 @@ const setCarProvider = (req,res)=>{
                 return 0;
             })})
         .catch((err)=>{
-            res.status(200).send(err)
+            res.status(500).send(err)
             return 0;
         })
 }

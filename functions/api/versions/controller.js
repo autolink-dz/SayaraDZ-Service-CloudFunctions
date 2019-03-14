@@ -34,6 +34,10 @@ const getVersions = (req,res)=>{
                                      res.status(200).json({next,data})
                                      return 0;
                                  })
+                                 .catch((err)=>{
+                                    res.status(500).send(err)
+                                    return 0;
+                                })
             
     }
 
@@ -48,6 +52,10 @@ const getVersion  = (req,res)=>{
                         .get()
                         .then(doc => {
                             res.status(200).json(doc.data())
+                            return 0;
+                        })
+                        .catch((err)=>{
+                            res.status(500).send(err)
                             return 0;
                         })
     }
@@ -65,6 +73,10 @@ const updateVersion= (req,res)=>{
                         .then((result) => {
                             data.id = versionID
                             res.status(200).json(data)
+                            return 0;
+                        })
+                        .catch((err)=>{
+                            res.status(500).send(err)
                             return 0;
                         })
                       
@@ -113,6 +125,10 @@ const setVersion= (req,res)=>{
                         
                            return 0;
                         })    
+                        .catch((err)=>{
+                            res.status(500).send(err)
+                            return 0;
+                        })
     }
 
 const deleteVersion = (req,res)=>{
@@ -128,6 +144,10 @@ const deleteVersion = (req,res)=>{
                             res.status(200).json({versionID})
                             return 0;
                          })
+                         .catch((err)=>{
+                            res.status(500).send(err)
+                            return 0;
+                        })
     };
 
 module.exports = {  getVersions ,

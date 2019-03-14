@@ -32,6 +32,10 @@ const getBrands = (req,res)=>{
                                     res.status(200).json({next,data})
                                     return 0;
                                 })
+                                .catch((err)=>{
+                                    res.status(500).send(err)
+                                    return 0;
+                                })
            
     }
 
@@ -43,6 +47,10 @@ const getBrand  = (req,res)=>{
                     .get()
                     .then(doc => {
                         res.status(200).json(doc.data())
+                        return 0;
+                    })
+                    .catch((err)=>{
+                        res.status(500).send(err)
                         return 0;
                     })
                     
@@ -58,6 +66,10 @@ const updateBrand= (req,res)=>{
                     .then((result) => {
                         data.id = id
                         res.status(200).json(data)
+                        return 0;
+                    })
+                    .catch((err)=>{
+                        res.status(500).send(err)
                         return 0;
                     })
                   
@@ -90,6 +102,10 @@ const setBrand= (req,res)=>{
                           res.status(200).json(data)
                     
                        return 0;
+                    })
+                    .catch((err)=>{
+                        res.status(500).send(err)
+                        return 0;
                     })
 
    
