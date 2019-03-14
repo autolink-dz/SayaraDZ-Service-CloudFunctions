@@ -4,10 +4,7 @@ const admin = require("firebase-admin");
 
 const getCarProviders = (req,res)=>{
     let data = [];
-    const next  = req.query.next 
-    const page = req.query.page || 20
     const id_marque  = req.query.id_marque || null
-    let snapshotPromise;
     let ref;
 
     let source = admin.firestore().collection("fabricants")
@@ -16,25 +13,13 @@ const getCarProviders = (req,res)=>{
     else 
             ref = source.orderBy("id_marque")
 
-   if(next != 0){
-        snapshotPromise = source.doc(next)
-                                .get()
-                                .then(doc => {
-                                    return ref.startAfter(doc)
-                                              .limit(parseInt(page))
-                                              .get()})
-   }else{
-        snapshotPromise = ref.limit(parseInt(page))
-                             .get()
-   }
-
-    return  snapshotPromise .then(snapshot => {
+    return  ref.get()
+        .then(snapshot => {
                 snapshot.docs.forEach(doc => {
                             data.push(doc.data())
                         })
 
-                let next  = snapshot.size > 0 ? snapshot.docs[snapshot.size-1].id : null
-                res.status(200).json({next,data})
+                res.status(200).json({data})
                 return 0;
             })
             
@@ -95,23 +80,27 @@ const deleteCarProvider = (req,res)=>{
 };
 
 const setCarProvider = (req,res)=>{
-    let body  = req.body
-    let user = {
+    const body  = req.body;
+    const user = {
         nom: body.nom,
         prenom: body.prenom,
-        email: body.email,
-        num_tel: body.num_tel,
+        mail: body.mail,
+        mdp: body.mdp,
+        num_tlp: body.num_tlp,
         id_marque: body.id_marque,
+        adresse:body.adresse,
         disabled: false
-    }
-    
-
+    };
     return admin.auth().createUser({
-            email: user.email,
-            password: body.password,
-            displayName: user.prenom+" "+user.nom,
-            disabled: user.disabled})
+        email: user.mail,
+        emailVerified: false,
+        phoneNumber: user.num_tlp,
+        password: user.mdp,
+        displayName: user.prenom + " " + user.nom,
+        disabled: false
+    })
         .then(function(userRecord) {
+            console.log(userRecord);
             user.id = userRecord.uid
             return admin.firestore().collection("fabricants")
                         .doc(user.id)
@@ -120,6 +109,10 @@ const setCarProvider = (req,res)=>{
                 res.status(200).json(user)
                 return 0;
             })})
+        .catch((err)=>{
+            res.status(200).send(err)
+            return 0;
+        })
 }
 
 module.exports = {getCarProviders,
