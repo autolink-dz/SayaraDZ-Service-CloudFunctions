@@ -84,13 +84,14 @@ const setModel= (req,res)=>{
     const data  = {
                     nom: body.nom,
                     url: body.url,
+                    id: body.code,
                     id_marque: body.id_marque,
                     options: body.options || null,
                     couleurs: body.couleurs  || null}
 
     return admin.firestore().collection("modeles")
                     .where("id_marque","==",data.id_marque)
-                    .where("nom","==",data.nom)
+                    .where("id","==",data.id)
                     .get()
                     .then(snapshot =>{
                       
@@ -98,9 +99,9 @@ const setModel= (req,res)=>{
                             return 0;
                         }else{
                             
-                            let ref  = admin.firestore().collection("modeles").doc()
-                            data.id = ref.id
+                            let ref  = admin.firestore().collection("modeles").doc(data.id)
                             return ref.set(data) 
+
                            }
                         })
                     .then((result) => {

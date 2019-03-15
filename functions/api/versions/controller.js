@@ -90,12 +90,12 @@ const setVersion= (req,res)=>{
         
         
         const data = {
-            id: ref.id,
+            id: body.code,
             nom: body.nom,
             url: body.url,
             fiche_tech: body.fiche_tech,
             options: body.options || null,
-            colors: body.colors  || null
+            couleurs: body.couleurs  || null
           }
 
         return admin.firestore().collection("modeles")
@@ -112,8 +112,7 @@ const setVersion= (req,res)=>{
                                 const ref  = admin.firestore().collection("modeles")
                                                 .doc(modelID)
                                                 .collection("versions")
-                                                .doc()
-                                data.id = ref.id
+                                                .doc(data.id)
                                 return ref.set(data)
                             
                             }

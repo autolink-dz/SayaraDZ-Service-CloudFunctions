@@ -12,6 +12,7 @@ const api  = require('./api/api');
 const onCarDriverCreated = require("./tirggers/authentication/onCarDriverCreated")
 const createThumbnail = require("./tirggers/storage/createThumbnail")
 const processPricesCsvFile = require("./tirggers/storage/processPricesCsvFile")
+const processCarsCsvFile = require("./tirggers/storage/processCarsCsvFile")
 
 //intialize the firebase admin sdk
 admin.initializeApp(functions.config().firebase);
@@ -47,8 +48,10 @@ exports.authenticationTrigger = functions.auth.user().onCreate((user) => {
  */
 exports.storageTrigger = functions.storage.object().onFinalize((object)=>{
     if (object.name.startsWith('images/')) 
-        createThumbnail(object)
-    else if (object.name.startsWith('csv/')) 
-        processPricesCsvFile(object)
+        return createThumbnail(object)
+    else if (object.name.startsWith('csv/tarifs')) 
+        return processPricesCsvFile(object)
+    else if (object.name.startsWith('csv/stocks')) 
+        return processCarsCsvFile(object)
 
 })

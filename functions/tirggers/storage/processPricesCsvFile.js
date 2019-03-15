@@ -6,7 +6,6 @@ const gcs = new Storage({
 
 const tmpdir  =  require("os").tmpdir
 const join  = require("path").join
-const dirname  = require("path").dirname
 
 const fs = require("fs-extra")
 const csv=require("csvtojson");
@@ -15,28 +14,31 @@ const processPricesCsvFile = (object)=>{
     const bucket = gcs.bucket(object.bucket);
     const filePath = object.name;
     const fileName = filePath.split('/').pop();
-    const workingDir = join(tmpdir(), 'thumbs');
-    const tmpFilePath = join(workingDir, 'price.csv');
-    const deleteBatch =  admin.firestore().batch()
+    const workingDir = join(tmpdir(), 'tarifs');
+    const tmpFilePath = join(workingDir, 'tarif.csv');
     const writeBatch =  admin.firestore().batch()
     const id = fileName.split(".")[0]
-    const ref = admin.firestore().collection("marques").doc(id).collection("tarifs")
-    var objects
+    const date  = new Date()
+    const ref = admin.firestore().collection("tarifs").doc(id).collection(String(date.getTime()))
 
     return fs.ensureDir(workingDir)
-                .then((result) => {
+                .then(() => {
                     return bucket.file(filePath).download({
                         destination: tmpFilePath }); 
-                    })
-                .then((result)=>{
+                })
+                .then(result=>{
 
                         return csv()
                                 .fromFile(tmpFilePath)  
+
+                
                                        
-                }).then((jsonObject)=>{
-                    
-                    objects  = jsonObject.map(object =>{
+                })
+                .then((jsonObject)=>{
+                
+                    jsonObject.forEach(object =>{
                         let type;
+                        
                         switch (object.type) {
                             case "0":
                                 type = "version"    
@@ -53,39 +55,31 @@ const processPricesCsvFile = (object)=>{
                             default:
                                 break;
                         }
-
-                        return {
-                            modele: object.modele,
-                            type,  
-                            code: object.code,
-                            prix: parseFloat(object.prix),
-                            date_debut: new Date(object.date_debut),
-                            date_fin: new Date(object.date_fin)
-                        }
-                    
-                    
-                    })
-
-                    return  ref.listDocuments()
-                })
-                
-                .then(res => {
-                    console.log("Deleting the old price documents for the brand with id "+id);
-                    res.map((doc) => {
-                        deleteBatch.delete(doc)
-                    })
-                    return deleteBatch.commit()
-                })
-                .then(()=>{
-                    console.log("creating the new price documents for the brand with id "+id);
-                    objects.forEach(object => {
+                        
                         let docRef  = ref.doc()
-                        writeBatch.set(docRef,object)
-                    });
+
+                        let document =  {
+                                id: docRef.id,
+                                modele: object.modele,
+                                type,  
+                                code: object.code,
+                                prix: parseFloat(object.prix),
+                                date_debut: new Date(object.date_debut),
+                                date_fin: new Date(object.date_fin)
+                            }
+                        
+                        writeBatch.set(docRef,document)
+                    
+                    })
                     
                     return writeBatch.commit()
-
+               
                 })
+                .catch((err)=>{
+                    console.log(err);
+                    
+                })
+              
 }
 
 
