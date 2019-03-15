@@ -11,6 +11,7 @@ const auth  = require('./auth');
 const api  = require('./api/api');
 const onCarDriverCreated = require("./tirggers/authentication/onCarDriverCreated")
 const createThumbnail = require("./tirggers/storage/createThumbnail")
+const processPricesCsvFile = require("./tirggers/storage/processPricesCsvFile")
 
 //intialize the firebase admin sdk
 admin.initializeApp(functions.config().firebase);
@@ -45,7 +46,9 @@ exports.authenticationTrigger = functions.auth.user().onCreate((user) => {
  * SayaraDZ resources upload triggers module
  */
 exports.storageTrigger = functions.storage.object().onFinalize((object)=>{
-    if (object.name.startsWith('images/')) createThumbnail(object)
-  
+    if (object.name.startsWith('images/')) 
+        createThumbnail(object)
+    else if (object.name.startsWith('csv/')) 
+        processPricesCsvFile(object)
 
 })
