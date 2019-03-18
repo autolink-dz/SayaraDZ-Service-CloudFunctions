@@ -1,6 +1,43 @@
 const admin = require("firebase-admin");
 
 
+const setCarProvider = (req,res)=>{
+    const body  = req.body;
+    const user = {
+        nom: body.nom,
+        prenom: body.prenom,
+        mail: body.mail,
+        mdp: body.mdp,
+        num_tlp: body.num_tlp,
+        id_marque: body.id_marque,
+        adresse:body.adresse,
+        disabled: false
+    }; 
+                     
+    return admin.auth().createUser({
+        email: user.mail,
+        emailVerified: false,
+        phoneNumber: user.num_tlp,
+        password: user.mdp,
+        displayName: user.prenom + " " + user.nom,
+        disabled: false
+        })
+        .then((userRecord)=> {
+            console.log(userRecord);
+            user.id = userRecord.uid
+            return admin.firestore().collection("fabricants")
+                        .doc(user.id)
+                        .set(user)
+        })
+        .then((result) => {
+            res.status(200).json(user)
+            return 0;
+        })
+        .catch((err)=>{
+            res.status(500).send(err)
+            return 0;
+        })
+}
 
 const getCarProviders = (req,res)=>{
     let data = [];
@@ -95,44 +132,9 @@ const deleteCarProvider = (req,res)=>{
                 })
 };
 
-const setCarProvider = (req,res)=>{
-    const body  = req.body;
-    const user = {
-        nom: body.nom,
-        prenom: body.prenom,
-        mail: body.mail,
-        mdp: body.mdp,
-        num_tlp: body.num_tlp,
-        id_marque: body.id_marque,
-        adresse:body.adresse,
-        disabled: false
-    };
-    return admin.auth().createUser({
-        email: user.mail,
-        emailVerified: false,
-        phoneNumber: user.num_tlp,
-        password: user.mdp,
-        displayName: user.prenom + " " + user.nom,
-        disabled: false
-    })
-        .then(function(userRecord) {
-            console.log(userRecord);
-            user.id = userRecord.uid
-            return admin.firestore().collection("fabricants")
-                        .doc(user.id)
-                        .set(user)
-            .then((result) => {
-                res.status(200).json(user)
-                return 0;
-            })})
-        .catch((err)=>{
-            res.status(500).send(err)
-            return 0;
-        })
-}
 
-module.exports = {getCarProviders,
+module.exports = {setCarProvider,
+                  getCarProviders,
                   getCarProvider,
                   updateCarProvider,
-                  deleteCarProvider,
-                  setCarProvider}
+                  deleteCarProvider}

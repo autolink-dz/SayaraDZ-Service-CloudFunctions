@@ -1,16 +1,64 @@
 const admin = require("firebase-admin");
 
 
+const setVersion= (req,res)=>{
+
+    const body  = req.body        
+    const data = {
+        code: body.code,
+        id_marque: body.id_marque,
+        id_modele: body.id_modele,
+        nom: body.nom,
+        url: body.url,
+        fiche_tech: body.fiche_tech,
+        options: body.options || null,
+        couleurs: body.couleurs  || null
+      }
+
+    return admin.firestore().collection("versions")
+                    .where("id_marque","==",data.id_marque)
+                    .where("id_modele","==",data.id_modele)
+                    .where("code","==",data.code)
+                    .get()
+                    .then(snapshot=>{
+                       
+                        if(snapshot.size > 0){
+                            return 0;
+                        
+                        }else{
+                            const ref  = admin.firestore().collection("versions")
+                                              .doc()
+
+                            data.id = ref.id
+                            return ref.set(data)
+                        
+                        }
+                    }).then((result) => {
+                        if(result ==0)
+                          res.status(500).json({error: "version aleardy exist"})
+                        else 
+                          res.status(200).json(data)
+                    
+                       return 0;
+                    })    
+                    .catch((err)=>{
+                        res.status(500).send(err)
+                        return 0;
+                    })
+}
+
 const getVersions = (req,res)=>{
     const next  = req.query.next 
     const page = req.query.page || 20
-    const modelID  = req.ID_MODELE
+    const id_modele  = req.query.id_modele
 
     let data = [];
     let snapshotPromise;
-    let ref = admin.firestore().collection("modeles").doc(modelID).collection("versions");
+    let ref = admin.firestore()
+                    .collection("versions")
+            
    
-
+    if(id_modele) ref = ref.where("id_modele","==",id_modele)
  
     if(next != 0 ){
          snapshotPromise = ref.doc(next)
@@ -43,11 +91,8 @@ const getVersions = (req,res)=>{
 
 const getVersion  = (req,res)=>{
         const versionID = req.params.ID_VERSION
-        const modelID   = req.ID_MODELE
         
-       return admin.firestore().collection("modeles")
-                        .doc(modelID)
-                        .collection("versions")
+       return admin.firestore().collection("versions")
                         .doc(versionID)
                         .get()
                         .then(doc => {
@@ -63,11 +108,8 @@ const getVersion  = (req,res)=>{
 const updateVersion= (req,res)=>{
         const data  = req.body
         const versionID = req.params.ID_VERSION
-        const modelID   = req.ID_MODELE
     
-        return admin.firestore().collection("modeles")
-                        .doc(modelID)
-                        .collection("versions")
+        return admin.firestore().collection("versions")
                         .doc(versionID)
                         .update(data)
                         .then((result) => {
@@ -82,65 +124,14 @@ const updateVersion= (req,res)=>{
                       
     }
 
-const setVersion= (req,res)=>{
-
-        const body  = req.body
-        const modelID   = req.ID_MODELE
-
-        
-        
-        const data = {
-            id: body.code,
-            nom: body.nom,
-            url: body.url,
-            fiche_tech: body.fiche_tech,
-            options: body.options || null,
-            couleurs: body.couleurs  || null
-          }
-
-        return admin.firestore().collection("modeles")
-                        .doc(modelID)
-                        .collection("versions")
-                        .where("nom","==",body.nom)
-                        .get()
-                        .then(snapshot=>{
-                           
-                            if(snapshot.size > 0){
-                                return 0;
-                            
-                            }else{
-                                const ref  = admin.firestore().collection("modeles")
-                                                .doc(modelID)
-                                                .collection("versions")
-                                                .doc(data.id)
-                                return ref.set(data)
-                            
-                            }
-                        }).then((result) => {
-                            if(result ==0)
-                              res.status(500).json({error: "version aleardy exist"})
-                            else 
-                              res.status(200).json(data)
-                        
-                           return 0;
-                        })    
-                        .catch((err)=>{
-                            res.status(500).send(err)
-                            return 0;
-                        })
-    }
-
 const deleteVersion = (req,res)=>{
         const versionID = req.params.ID_VERSION
-        const modelID   = req.ID_MODELE
     
-        return admin.firestore().collection("modeles")
-                         .doc(modelID)
-                         .collection("versions")
+        return admin.firestore().collection("versions")
                          .doc(versionID)
                          .delete()
                          .then(()=>{
-                            res.status(200).json({versionID})
+                            res.status(200).json({id:versionID})
                             return 0;
                          })
                          .catch((err)=>{
@@ -149,9 +140,9 @@ const deleteVersion = (req,res)=>{
                         })
     };
 
-module.exports = {  getVersions ,
+module.exports = {  setVersion, 
+                    getVersions ,
                     getVersion ,
                     updateVersion ,
-                    deleteVersion ,
-                    setVersion }
+                    deleteVersion}
  

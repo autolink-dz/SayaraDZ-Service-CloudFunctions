@@ -1,5 +1,44 @@
 const admin = require("firebase-admin");
 
+const setBrand= (req,res)=>{
+
+    const body  = req.body
+    const data  = {
+                    nom: body.nom,
+                    url: body.url 
+                }
+
+    return admin.firestore().collection("marques")
+                   .where("nom","==",body.nom)
+                   .get()
+                   .then(snapshot=>{
+                       
+                    if(snapshot.size > 0){
+                        return 0;
+                    }else{
+                        let ref  = admin.firestore().collection("marques").doc()
+                        data.id = ref.id
+                        return ref.set(data)
+                    }
+                   }).then((result) => {
+                        
+                        if(result == 0)
+                          res.status(500).json({error: "brand aleardy exist"})
+                        else 
+                          res.status(200).json(data)
+                    
+                       return 0;
+                    })
+                    .catch((err)=>{
+                        res.status(500).send(err)
+                        return 0;
+                    })
+
+   
+
+        
+                  
+}
 
 const getBrands = (req,res)=>{
    let data = [];
@@ -75,45 +114,8 @@ const updateBrand= (req,res)=>{
                   
 }
 
-const setBrand= (req,res)=>{
 
-    const body  = req.body
-    const data  = {
-        nom: body.nom,
-        url: body.url }
-
-    return admin.firestore().collection("marques")
-                   .where("nom","==",body.nom)
-                   .get()
-                   .then(snapshot=>{
-                       
-                    if(snapshot.size > 0){
-                        return 0;
-                    }else{
-                        let ref  = admin.firestore().collection("marques").doc()
-                        data.id = ref.id
-                        return ref.set(data)
-                    }
-                   }).then((result) => {
-                        
-                        if(result == 0)
-                          res.status(500).json({error: "brand aleardy exist"})
-                        else 
-                          res.status(200).json(data)
-                    
-                       return 0;
-                    })
-                    .catch((err)=>{
-                        res.status(500).send(err)
-                        return 0;
-                    })
-
-   
-
-        
-                  
-}
-
+// TODO: refactor to a database trigger to delete fabricants, versinos, stocks, price ,commands
 const deleteBrand = (req,res)=>{
     const id = req.params.ID_MARQUE
 
@@ -124,26 +126,30 @@ const deleteBrand = (req,res)=>{
                        return admin.firestore().collection("fabricants")
                                          .where("id_marque","==",id)
                                          .get()
-                                         .then(snapshot => {
-                                            const batch =  admin.firestore().batch()
-                                            snapshot.docs.forEach(doc => {
-                                                batch.delete(doc.ref);
-                                                admin.auth().deleteUser(doc.id)  
-                                                })
-                                            return batch.commit(); })
-                                          .then((result) => {
-                                                res.json({id}).status(200)
-                                                return 0;
-                                           })
                  })
-                
+                 .then(snapshot => {
+                    const batch =  admin.firestore().batch()
+                    snapshot.docs.forEach(doc => {
+                        batch.delete(doc.ref);
+                        admin.auth().deleteUser(doc.id)  
+                        })
+                    return batch.commit(); 
+                })
+                .then((result) => {
+                        res.json({id}).status(200)
+                        return 0;
+                })
+                .catch((err)=>{
+                    res.status(500).send(err)
+                    return 0;
+                })
             
    
 };
 
 
-module.exports = {getBrands,
+module.exports = {setBrand,
+                  getBrands,
                   getBrand,
                   updateBrand,
-                  deleteBrand,
-                  setBrand}
+                  deleteBrand}

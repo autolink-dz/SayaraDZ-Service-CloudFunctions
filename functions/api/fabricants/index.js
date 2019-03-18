@@ -1,10 +1,9 @@
 const fabricants = require("express").Router()
 const controller = require("./controller")
 
+fabricants.post("/",controller.setCarProvider);
 
 fabricants.get("/",controller.getCarProviders);
-
-fabricants.post("/",controller.setCarProvider);
 
 fabricants.get("/:ID_FABRIQUANT",controller.getCarProvider);
 

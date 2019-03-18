@@ -1,6 +1,50 @@
 const admin = require("firebase-admin");
 
 
+const setModel= (req,res)=>{
+
+    const body  = req.body
+   
+    const data  = {
+                    nom: body.nom,
+                    url: body.url,
+                    code: body.code,
+                    id_marque: body.id_marque,
+                    options: body.options || null,
+                    couleurs: body.couleurs  || null}
+
+    return admin.firestore().collection("modeles")
+                    .where("id_marque","==",data.id_marque)
+                    .where("code","==",data.code)
+                    .get()
+                    .then(snapshot =>{
+                      
+                        if(snapshot.size > 0){
+                            return 0;
+                        }else{
+                            
+                            let ref  = admin.firestore().collection("modeles").doc()
+                            data.id = ref.id
+                            return ref.set(data) 
+
+                           }
+                        })
+                    .then((result) => {
+                        if(result ==0)
+                          res.status(500).json({error: "model aleardy exist"})
+                        else 
+                          res.status(200).json(data)
+                    
+                       return 0;
+                    })
+                    .catch((err)=>{
+                        res.status(500).send(err)
+                        return 0;
+                    })
+                   
+}
+
+
 const getModels = (req,res)=>{
     const next  = req.query.next 
     const page = req.query.page || 20
@@ -77,50 +121,6 @@ const updateModel= (req,res)=>{
                   
 }
 
-const setModel= (req,res)=>{
-
-    const body  = req.body
-   
-    const data  = {
-                    nom: body.nom,
-                    url: body.url,
-                    id: body.code,
-                    id_marque: body.id_marque,
-                    options: body.options || null,
-                    couleurs: body.couleurs  || null}
-
-    return admin.firestore().collection("modeles")
-                    .where("id_marque","==",data.id_marque)
-                    .where("id","==",data.id)
-                    .get()
-                    .then(snapshot =>{
-                      
-                        if(snapshot.size > 0){
-                            return 0;
-                        }else{
-                            
-                            let ref  = admin.firestore().collection("modeles").doc(data.id)
-                            return ref.set(data) 
-
-                           }
-                        })
-                    .then((result) => {
-                        if(result ==0)
-                          res.status(500).json({error: "model aleardy exist"})
-                        else 
-                          res.status(200).json(data)
-                    
-                       return 0;
-                    })
-                    .catch((err)=>{
-                        res.status(500).send(err)
-                        return 0;
-                    })
-                   
-}
-
-
-
 const deleteModel = (req,res)=>{
     const id = req.params.ID_MODELE
 
@@ -128,10 +128,8 @@ const deleteModel = (req,res)=>{
                      .doc(id)
                      .delete()
                      .then(()=>{
-                          //delete the versions
-                          //delete the options tarifs
-                          //delete the colors  tarifs
-                          //delete the versions tarifs
+                        
+                        //TODO: delete the versions
                         res.status(200).json({id})
                         return 0;
                      })
