@@ -10,3 +10,5 @@ commandes.get("/:ID_COMMANDE",controller.getOrder);
 commandes.put("/:ID_COMMANDE",controller.updateOrder);
 
 commandes.delete("/:ID_COMMANDE",controller.deleteOrder);
+
+module.exports = commandes;

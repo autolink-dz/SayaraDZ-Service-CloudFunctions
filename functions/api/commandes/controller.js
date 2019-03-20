@@ -1,28 +1,5 @@
 const admin = require("firebase-admin")
 
-
-const updateCarState = (id_marque,id_voiture,state)=>{
-        return admin.firestore().collection("vehicules")
-        .doc(id_marque)
-        .getCollections()
-        .then(collections=>{
-                            
-            let ids = collections.map(collection=>{                        
-                    return  parseInt(collection.id)
-            })
-
-            let recentStockId = Math.max.apply( null,ids );
-
-            return admin.firestore().collection("vehicules")
-                        .doc(id_marque)
-                        .collection(""+recentStockId)
-                        .doc(id_voiture)
-                        .update({ disponible: state })
-        
-        })
-} 
-
-
 const setOrder = (req,res)=>{
 
     const data   = req.body
@@ -40,12 +17,8 @@ const setOrder = (req,res)=>{
     let ref = admin.firestore().collection("commandes")
                      .doc()
     order.id  = ref.id
+    
         return ref.set(order)
-                    .then((result) => {
-                        
-                        return updateCarState(order.id_marque,order.id_voiture,false)
-                                
-                    })
                     .then((res)=>{
                         res.status(200).json({order})
                         return 0;

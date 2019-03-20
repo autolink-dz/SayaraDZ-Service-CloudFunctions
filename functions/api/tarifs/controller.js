@@ -6,9 +6,9 @@ const getPrice = (req,res)=>{
     const code       = req.params.CODE
     const type       = req.type  
     const date       = new Date()
-
     return admin.firestore().collection("tarifs")
                             .doc(id_marque)
+                            .getCollections()
                             .then(collections=>{
                                 ids = collections.map(collection=>{
                                     return  parseInt(collection.id)
@@ -16,22 +16,24 @@ const getPrice = (req,res)=>{
             
                                 var recentPricesFileId = String(Math.max.apply( null, ids ));
                                 
-                                return admin.firestore().collection("vehicules")
+                                return admin.firestore().collection("tarifs")
                                             .doc(id_marque)
                                             .collection(recentPricesFileId)
                                             .where("type","==",type)
                                             .where("code","==",code)
                                             .where("modele","==",code_modele)
-                                            .where("date_debut","<=",date)
-                                            .where("date_fin",">=",date)
-                                            .orderBy("date_debut")
-                                            .limit(1)
                                             .get()
                             
                             })
                             .then(snapshot=>{
+                            
+                                
+                                let docs  = snapshot.docs.filter(doc=>{
+                                   return doc.data().date_fin.toDate() >= date && doc.data().date_debut.toDate() <= date
+                                })
 
-                                let data = snapshot.docs[0] || null
+                                let data = docs[0].data()
+                                if(data) data.marque  = id_marque
                                 res.status(200).json(data)
                                 return 0;
                             })

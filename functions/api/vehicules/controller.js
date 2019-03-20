@@ -26,7 +26,7 @@ const getCars= (req,res)=>{
                     
                     let ref =  admin.firestore().collection("vehicules")
                                 .doc(id_marque)
-                                .collection(""+recentStockId)
+                                .collection(String(recentStockId))
 
                     if (modele)     ref = ref.where("modele","==",modele)
                     if (version)    ref = ref.where("version","==",version)

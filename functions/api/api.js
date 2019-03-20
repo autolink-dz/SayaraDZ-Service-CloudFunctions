@@ -6,6 +6,7 @@ const modeles   = require('./modeles/index');
 const versions  = require('./versions/index');
 const vehicules = require('./vehicules/index');
 const commandes = require('./commandes/index');
+const tarifs = require('./tarifs/index');
 
 const api = express.Router();
 
@@ -16,5 +17,6 @@ api.use("/modeles",modeles);
 api.use("/versions",versions);
 api.use("/vehicules",vehicules);
 api.use("/commandes",commandes);
+api.use("/tarifs",tarifs);
 
 module.exports = api

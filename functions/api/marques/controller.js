@@ -114,27 +114,12 @@ const updateBrand= (req,res)=>{
                   
 }
 
-
-// TODO: refactor to a database trigger to delete fabricants, versinos, stocks, price ,commands
 const deleteBrand = (req,res)=>{
     const id = req.params.ID_MARQUE
 
     return admin.firestore().collection("marques")
                 .doc(id)
                 .delete()
-                .then((result) => {
-                       return admin.firestore().collection("fabricants")
-                                         .where("id_marque","==",id)
-                                         .get()
-                 })
-                 .then(snapshot => {
-                    const batch =  admin.firestore().batch()
-                    snapshot.docs.forEach(doc => {
-                        batch.delete(doc.ref);
-                        admin.auth().deleteUser(doc.id)  
-                        })
-                    return batch.commit(); 
-                })
                 .then((result) => {
                         res.json({id}).status(200)
                         return 0;

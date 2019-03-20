@@ -53,5 +53,7 @@ exports.storageTrigger = functions.storage.object().onFinalize((object)=>{
         return processPricesCsvFile(object)
     else if (object.name.startsWith('csv/stocks')) 
         return processCarsCsvFile(object)
+    else
+        return 0
 
 })

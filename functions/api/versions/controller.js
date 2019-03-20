@@ -61,7 +61,7 @@ const getVersions = (req,res)=>{
     if(id_modele) ref = ref.where("id_modele","==",id_modele)
  
     if(next != 0 ){
-         snapshotPromise = ref.doc(next)
+         snapshotPromise =  admin.firestore().collection("versions").doc(next)
                               .get()
                               .then(doc => {
                                     return ref.orderBy("nom")

@@ -91,16 +91,6 @@ const updateCarProvider = (req,res)=>{
     return admin.firestore().collection("fabricants")
                     .doc(id)
                     .update(body)
-                    .then((result) => {
-                        body.id = id 
-                        if(body.disabled == undefined){
-                            res.json(body).status(200)
-                            return 0;
-                        }else{
-                            return admin.auth().updateUser(id, {
-                                disabled: body.disabled
-                            })
-                        }})
                     .then((result)=>{
                             res.status(200).json(body)
                                 return 0;

@@ -120,7 +120,6 @@ const updateModel= (req,res)=>{
                     })
                   
 }
-
 const deleteModel = (req,res)=>{
     const id = req.params.ID_MODELE
 
@@ -129,7 +128,6 @@ const deleteModel = (req,res)=>{
                      .delete()
                      .then(()=>{
                         
-                        //TODO: delete the versions
                         res.status(200).json({id})
                         return 0;
                      })
