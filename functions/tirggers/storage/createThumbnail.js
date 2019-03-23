@@ -72,33 +72,9 @@ const createThumbnail = (object)=>{
                         let ref;
                         let resDirectoryName  = filePath.split('/')[1]
                         let key = fileName.split(".")[0]
-                        switch (resDirectoryName) {
-                            
-                            case "versions":{
-                                    let modelID = key.split("_")[0]
-                                    let versionID = key.split("_")[1]
-                                    ref = admin.firestore().collection("modeles").doc(modelID)
-                                                                .collection("version")
-                                                                .doc(versionID)
-                                break;
-                            }
-                            
-                            case "modeles":{
-                                    ref = admin.firestore().collection("modeles").doc(key)
-                                break;
-                            }
-                            
-                            case "marque":{
-                                    ref = admin.firestore().collection("marque").doc(key)
-                                break;
-                            }
-                            
-                            default:
-                                break;
-                        }
                 
-    
-                        return ref.update({ url: url.pop() })  
+                        return admin.firestore().collection(resDirectoryName).doc(key)
+                                    .update({ url: url.pop() })  
                     })
                 }
 

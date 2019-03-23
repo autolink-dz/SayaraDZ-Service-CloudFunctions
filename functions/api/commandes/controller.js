@@ -6,11 +6,11 @@ const setOrder = (req,res)=>{
     const order  = {
         id_marque: data.id_marque,
         id_automobiliste : data.id_automobiliste,
-        id_voiture : data.id_voiture,
-        prix : data.prix,
+        id_vehicule : data.id_vehicule,
+        prix : parseFloat(data.prix),
         etas : 1,
-        message: null,
-        versement: data.versement,
+        message: "",
+        versement: parseFloat(data.versement),
         date: new Date()
     }
 
@@ -19,10 +19,10 @@ const setOrder = (req,res)=>{
     order.id  = ref.id
     
         return ref.set(order)
-                    .then((res)=>{
+                  .then((result)=>{
                         res.status(200).json({order})
                         return 0;
-                    })    
+                  })    
                   .catch((err) => {
                         res.status(500).send(err)
                         return 0;

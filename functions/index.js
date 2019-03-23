@@ -13,6 +13,10 @@ const onCarDriverCreated = require("./tirggers/authentication/onCarDriverCreated
 const createThumbnail = require("./tirggers/storage/createThumbnail")
 const processPricesCsvFile = require("./tirggers/storage/processPricesCsvFile")
 const processCarsCsvFile = require("./tirggers/storage/processCarsCsvFile")
+const databaseOrdersTriggers = require("./tirggers/database/commandes")
+const databaseCarProviderTriggers = require("./tirggers/database/fabricants")
+const databaseBrandTriggers = require("./tirggers/database/marques")
+const databaseModelsTriggers = require("./tirggers/database/modeles")
 
 //intialize the firebase admin sdk
 admin.initializeApp(functions.config().firebase);
@@ -57,3 +61,11 @@ exports.storageTrigger = functions.storage.object().onFinalize((object)=>{
         return 0
 
 })
+
+
+
+exports.onOrderCreated = databaseOrdersTriggers.onOrderCreated
+exports.onOrderUpdated = databaseOrdersTriggers.onOrderUpdated
+exports.onCarProviderUpdated =  databaseCarProviderTriggers.onCarProviderUpdated
+exports.onBrandDeleted = databaseBrandTriggers.onBrandDeleted
+exports.onModelDeleted = databaseModelsTriggers.onModelDeleted

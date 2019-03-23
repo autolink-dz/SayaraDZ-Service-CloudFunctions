@@ -1,7 +1,7 @@
 const functions = require("firebase-functions");
 const admin  = require("firebase-admin");
 
-const updateCarState = (id_marque,id_voiture,state)=>{
+const updateCarState = (id_marque,id_vehicule,state)=>{
         
         return admin.firestore().collection("vehicules")
         .doc(id_marque)
@@ -17,7 +17,7 @@ const updateCarState = (id_marque,id_voiture,state)=>{
             return admin.firestore().collection("vehicules")
                         .doc(id_marque)
                         .collection(String(recentStockId))
-                        .doc(id_voiture)
+                        .doc(id_vehicule)
                         .update({ disponible: state })
         
         })
@@ -28,7 +28,7 @@ const onOrderCreated = functions.firestore.document('commandes/{id_commande}')
       .onCreate((snap, context) => {
             console.log("onOrderCreated trigger");
             const order = snap.data();
-            return updateCarState(order.id_marque,order.id_voiture,false)
+            return updateCarState(order.id_marque,order.id_vehicule,false)
        });
 
 const onOrderUpdated = functions.firestore.document('commandes/{id_commande}')
