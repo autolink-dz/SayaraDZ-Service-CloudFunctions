@@ -28,7 +28,7 @@ const setModel= (req,res)=>{
                             return ref.set(data) 
 
                            }
-                        })
+                    })
                     .then((result) => {
                         if(result ==0)
                           res.status(500).json({error: "model aleardy exist"})

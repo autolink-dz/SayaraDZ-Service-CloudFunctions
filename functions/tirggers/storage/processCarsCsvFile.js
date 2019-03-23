@@ -34,13 +34,14 @@ const processCarsCsvFile = (object)=>{
                 })
                 .then((jsonObject)=>{
                     objects  = jsonObject.forEach(object =>{
-                        
+                        let options = object.options.split(',')
+                        options.sort()
                         let document ={
                             num_chassi: object.num_chassi,
                             modele:  object.modele,
                             version: object.version,
                             couleur: object.couleur,
-                            options: object.options.split(','),
+                            options,
                             disponible: true,
                             conscessionaier:object.conscessionaier
                             

@@ -32,7 +32,10 @@ const getCars= (req,res)=>{
                     if (modele)     ref = ref.where("modele","==",modele)
                     if (version)    ref = ref.where("version","==",version)
                     if (couleur)    ref = ref.where("couleur","==",couleur)
-                    if (options)    ref = ref.where("options","==",options)
+                    if (options)    {
+                        options.sort()
+                        ref = ref.where("options","==",options)
+                    }
                     if (disponible) ref = ref.where("disponible","==",(disponible =="true") )
                     
                     return ref.get()
