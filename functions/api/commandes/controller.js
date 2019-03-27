@@ -6,6 +6,7 @@ const setOrder = (req,res)=>{
     const order  = {
         id_marque: data.id_marque,
         id_automobiliste : data.id_automobiliste,
+        id_version:data.id_version,
         id_vehicule : data.id_vehicule,
         prix : parseFloat(data.prix),
         etas : 1,

@@ -42,8 +42,9 @@ exports.sayaraDzApi = functions.https.onRequest(app);
  * SayaraDZ authentication triggers module
  */
 exports.authenticationTrigger = functions.auth.user().onCreate((user) => {
-
-    return user.providerData[0].providerId != "password" ? 0: onCarDriverCreated(user);
+    console.log("a new user is created with "+user.providerData[0].providerId)
+    
+    return user.providerData[0].providerId == "password" ? 0: onCarDriverCreated(user);
 });
 
 

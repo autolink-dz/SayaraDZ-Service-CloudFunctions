@@ -44,7 +44,6 @@ const setModel= (req,res)=>{
                    
 }
 
-
 const getModels = (req,res)=>{
     const next  = req.query.next 
     const page = req.query.page || 20
