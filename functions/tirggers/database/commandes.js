@@ -46,7 +46,7 @@ const onOrderCreated = functions.firestore.document('commandes/{id_commande}')
             const order = snap.data();
             return updateCarState(order.id_marque,order.id_vehicule,false)
        });
-       
+
 
 const onOrderUpdated = functions.firestore.document('commandes/{id_commande}')
       .onUpdate((change, context) => {
@@ -56,43 +56,53 @@ const onOrderUpdated = functions.firestore.document('commandes/{id_commande}')
               const ORDER_ACCEPTED = 2
               const order = change.after.data();
               const oldData = change.before.data();
-              const notification = {
-                      title:"",
-                      body:""
-              }
+              let data
+              let validation
              
               if(order.etas == oldData.etas) return //the order state didn't change
               switch (order.etas) {
                     case ORDER_REJECTED:
-                            notification.title = "Commande rejetée"
+                            validation = String(false)
                             break;
                     case ORDER_ACCEPTED:
-                            notification.title = "Commande validée"
+                            validation = String(true)
                             break;
                     default:
                            return
               }
 
-              notification.body = order.message
+             
               return  admin.firestore().collection("versions")
                            .doc(order.id_version)
                            .get()
                            .then(doc => {
-                                        let version = doc.data()
-                                        return sendNotification({ notification,
-                                                data: {
-                                                    version: version.nom,
-                                                    price: String(order.prix),
-                                                    date: order.date.toDate().toString(),
-                                                    photo: version.url,
-                                                }},order.id_automobiliste)
-                                        
+                                
+                                let version = doc.data()
+                                data = {
+                                        android_channel_id: "0",
+                                        validation:String(validation),
+                                        version: version.nom,
+                                        message:order.message,
+                                        price: String(order.prix),
+                                        date: order.date.toDate().toString(),
+                                        photo: version.url,
+                                       }
+
+                                return  admin.firestore().collection("marques")
+                                                         .doc(version.id_marque)
+                                                         .get()
+                           })
+                           .then(doc => {
+                                       
+                                data.photo =  doc.data().url
+                                return sendNotification( {data} , order.id_automobiliste)
+                                
                            })
                            .then(()=>{
                                    if(order.etas == ORDER_REJECTED)
                                         return updateCarState(order.id_marque,order.id_vehicule,true)
                                    else 
-                                        return
+                                        return 0
                            })  
       });
 
