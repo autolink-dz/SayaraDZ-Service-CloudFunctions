@@ -33,6 +33,14 @@ const setOrder = (req,res)=>{
 
 const getOrders = (req,res)=>{
     let data = [];
+    let extras = {
+        automobilistes:{},
+        versions:{}
+    }
+    let users = []
+    let versions = []
+    let usersDocsPromise = []
+    let versionsDocsPromise = []
     const id_marque  = req.query.id_marque
 
     admin.firestore().collection("commandes")
@@ -40,14 +48,56 @@ const getOrders = (req,res)=>{
                      .orderBy("date")
                      .get()
                      .then(snapshot => {
-                             snapshot.docs.forEach(doc => {
-                                         data.push(doc.data())
+                            snapshot.docs.forEach(doc => {
+                                         let order =  doc.data()
+                                         users.push(order.id_automobiliste)
+                                         versions.push(order.id_version)
+                                         data.push(order)
                                      })
+
+                            users = Array.from(new Set(users));
+                            versions = Array.from(new Set(versions));
              
-                             res.status(200).json({data})
+                            users.forEach(id =>{
+                                usersDocsPromise.push(admin.firestore().collection("automobilistes")
+                                                .doc(id)
+                                                .get())
+                            })
+
+                            versions.forEach(id=>{
+                                versionsDocsPromise.push(admin.firestore().collection("versions")
+                                                    .doc(id)
+                                                    .get()) 
+                            })
+                         
+                          
+                          
+                            return Promise.all(usersDocsPromise)
+                      })
+                      .then(docs => {
+                        
+
+                        docs.forEach(doc => {
+                            extras.automobilistes[doc.id] = doc.data() 
+                        })
+
+                        return Promise.all(versionsDocsPromise)
+                       })
+                      .then(docs => {
+                        
+
+                        
+                        docs.forEach(doc => {
+                            extras.versions[doc.id] = doc.data() 
+                        })
+
+                        res.status(200).send({ data , extras })
                              return 0;
-                         })
+
+                       })
+
                          .catch((err)=>{
+                             console.log(err);
                              res.status(500).send(err)
                              return 0;
                          })
