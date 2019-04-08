@@ -43,8 +43,7 @@ const processCarsCsvFile = (object)=>{
                             couleur: object.couleur,
                             options,
                             disponible: true,
-                            conscessionaier:object.conscessionaier
-                            
+                            conscessionaier:object.conscessionaier      
                         }
 
                         let docRef  = ref.doc(document.num_chassi)

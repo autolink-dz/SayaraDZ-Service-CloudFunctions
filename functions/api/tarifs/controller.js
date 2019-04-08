@@ -6,6 +6,7 @@ const getPrice = (req,res)=>{
     const code       = req.params.CODE
     const type       = req.type  
     const date       = new Date()
+    
     return admin.firestore().collection("tarifs")
                             .doc(id_marque)
                             .getCollections()

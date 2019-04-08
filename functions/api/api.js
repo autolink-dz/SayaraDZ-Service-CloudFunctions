@@ -9,6 +9,8 @@ const commandes = require('./commandes/index');
 const tarifs = require('./tarifs/index');
 const notifications = require('./notifications/index');
 const automobilistes = require('./automobilistes/index');
+const annonces = require('./annonces/index');
+const offres = require('./offres/index');
 
 const api = express.Router();
 
@@ -22,6 +24,8 @@ api.use("/commandes",commandes);
 api.use("/tarifs",tarifs);
 api.use("/automobilistes",automobilistes);
 api.use("/notifications",notifications);
+api.use("/annonces",annonces);
+api.use("/offres",offres);
 
 
 module.exports = api

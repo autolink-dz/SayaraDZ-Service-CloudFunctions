@@ -9,6 +9,7 @@ const join  = require("path").join
 
 const fs = require("fs-extra")
 const csv=require("csvtojson");
+const utils = require("../../utils")
 
 const processPricesCsvFile = (object)=>{
     const bucket = gcs.bucket(object.bucket);
@@ -37,24 +38,7 @@ const processPricesCsvFile = (object)=>{
                 .then((jsonObject)=>{
                 
                     jsonObject.forEach(object =>{
-                        let type;
-                        
-                        switch (object.type) {
-                            case "0":
-                                type = "version"    
-                                break;
-
-                            case "1":
-                                type = "couleur"    
-                                break;
-
-                            case "2":
-                                type = "option"    
-                                break;
-                            
-                            default:
-                                break;
-                        }
+                        let type = utils.stockItem[object.type]
                         
                         let docRef  = ref.doc()
 

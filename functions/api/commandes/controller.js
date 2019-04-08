@@ -1,4 +1,6 @@
 const admin = require("firebase-admin")
+const utils = require("../../utils")
+
 
 const setOrder = (req,res)=>{
 
@@ -9,7 +11,7 @@ const setOrder = (req,res)=>{
         id_version:data.id_version,
         id_vehicule : data.id_vehicule,
         prix : parseFloat(data.prix),
-        etas : 1,
+        etas : utils.orderState.pending,
         message: "",
         versement: parseFloat(data.versement),
         date: new Date()
@@ -19,15 +21,15 @@ const setOrder = (req,res)=>{
                      .doc()
     order.id  = ref.id
     
-        return ref.set(order)
-                  .then((result)=>{
+    return ref.set(order)
+              .then((result)=>{
                         res.status(200).json({order})
                         return 0;
-                  })    
-                  .catch((err) => {
+              })    
+              .catch((err) => {
                         res.status(500).send(err)
                         return 0;
-                    });
+               });
 }
 
 
@@ -37,17 +39,26 @@ const getOrders = (req,res)=>{
         automobilistes:{},
         versions:{}
     }
+
     let users = []
     let versions = []
     let usersDocsPromise = []
     let versionsDocsPromise = []
+
+    const id_automobiliste = req.query.id_proprietaire || null
+    const etas = req.query.etas || null
     const id_marque  = req.query.id_marque
 
-    admin.firestore().collection("commandes")
-                     .where("id_marque","==",id_marque)
-                     .orderBy("date")
-                     .get()
-                     .then(snapshot => {
+
+    ref =   admin.firestore().collection("commandes")
+                             .where("id_marque","==",id_marque)
+
+    if(id_automobiliste) ref = ref.where("id_automobiliste","==",id_automobiliste)
+    if(etas) ref = ref.where("etas","==",etas)
+
+    ref.orderBy("date")
+       .get()
+       .then(snapshot => {
                             snapshot.docs.forEach(doc => {
                                          let order =  doc.data()
                                          users.push(order.id_automobiliste)
@@ -74,7 +85,7 @@ const getOrders = (req,res)=>{
                           
                             return Promise.all(usersDocsPromise)
                       })
-                      .then(docs => {
+        .then(docs => {
                         
 
                         docs.forEach(doc => {
@@ -83,7 +94,7 @@ const getOrders = (req,res)=>{
 
                         return Promise.all(versionsDocsPromise)
                        })
-                      .then(docs => {
+        .then(docs => {
                         
 
                         
@@ -96,7 +107,7 @@ const getOrders = (req,res)=>{
 
                        })
 
-                         .catch((err)=>{
+        .catch((err)=>{
                              console.log(err);
                              res.status(500).send(err)
                              return 0;
@@ -121,7 +132,6 @@ const getOrder = (req,res)=>{
                          return 0;
                      })
 }
-
 
 const updateOrder=(req,res)=>{
     

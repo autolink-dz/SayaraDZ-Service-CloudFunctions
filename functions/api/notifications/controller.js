@@ -16,8 +16,6 @@ const setSubscrptionState  = (req,res)=>{
                 let data   = doc.data()
                 let items =  data[type]
 
-
-               
                 if (req.method == 'POST') 
                      items.push(id) 
                 else 
@@ -25,10 +23,6 @@ const setSubscrptionState  = (req,res)=>{
 
                 data = {}
                 data[type] = items
-
-                console.log("the data is ");
-                console.log(data);
-                console.log(items);
 
                 return ref.update(data);
              })

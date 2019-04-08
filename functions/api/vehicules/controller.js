@@ -32,17 +32,13 @@ const getCars= (req,res)=>{
                     if (modele)     ref = ref.where("modele","==",modele)
                     if (version)    ref = ref.where("version","==",version)
                     if (couleur)    ref = ref.where("couleur","==",couleur)
-                    if (options)    {
-                        options.sort()
-                        ref = ref.where("options","==",options)
-                    }
+                    if (options)    {  options.sort(); ref = ref.where("options","==",options)}
                     if (disponible) ref = ref.where("disponible","==",(disponible =="true") )
                     
                     return ref.get()
                 
                 })
                 .then(snapshot=>{
-                    console.log("getting the cars "+snapshot.size);
                     
                      snapshot.docs.forEach(doc => {
                         let car  = doc.data()

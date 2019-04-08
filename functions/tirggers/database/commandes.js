@@ -1,5 +1,7 @@
 const functions = require("firebase-functions");
 const admin  = require("firebase-admin");
+const utils = require("../../utils")
+
 
 const updateCarState = (id_marque,id_vehicule,state)=>{
         
@@ -51,20 +53,18 @@ const onOrderCreated = functions.firestore.document('commandes/{id_commande}')
 const onOrderUpdated = functions.firestore.document('commandes/{id_commande}')
       .onUpdate((change, context) => {
               
-
-              const ORDER_REJECTED = 0
-              const ORDER_ACCEPTED = 2
               const order = change.after.data();
               const oldData = change.before.data();
               let data
               let validation
              
               if(order.etas == oldData.etas) return //the order state didn't change
+              
               switch (order.etas) {
-                    case ORDER_REJECTED:
+                    case utils.orderState.rejected:
                             validation = String(false)
                             break;
-                    case ORDER_ACCEPTED:
+                    case utils.orderState.accepted:
                             validation = String(true)
                             break;
                     default:
@@ -99,7 +99,7 @@ const onOrderUpdated = functions.firestore.document('commandes/{id_commande}')
                                 
                            })
                            .then(()=>{
-                                   if(order.etas == ORDER_REJECTED)
+                                   if(order.etas == utils.orderState.rejected)
                                         return updateCarState(order.id_marque,order.id_vehicule,true)
                                    else 
                                         return 0
