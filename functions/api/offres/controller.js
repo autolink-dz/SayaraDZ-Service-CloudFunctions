@@ -1,16 +1,16 @@
 const admin  = require("firebase-admin")
-
+const utils = require("../../utils")
 
 
 const setOffer = (req,res)=>{
 
     const body = req.body
     const data  = {
-        id_offre: body.id_proprietaire,
+        id_annonce: body.id_annonce,
         id_proprietaire : body.id_proprietaire,
         id_client: body.id_client,
         prix: parseFloat(body.prix),
-        etat: 1,
+        etat: utils.orderState.pending,
         date:new Date()
     }
 
@@ -47,4 +47,10 @@ const updateOffer = (req,res)=>{
                             res.status(500).send(err)
                             return 0;
                         })
+}
+
+
+module.exports = {
+    setOffer,
+    updateOffer
 }

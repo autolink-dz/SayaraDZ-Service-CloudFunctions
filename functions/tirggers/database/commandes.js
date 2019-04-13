@@ -5,7 +5,7 @@ const utils = require("../../utils")
 
 const updateCarState = (id_marque,id_vehicule,state)=>{
         
-        return admin.firestore().collection("vehicules")
+  return admin.firestore().collection("vehicules")
         .doc(id_marque)
         .getCollections()
         .then(collections=>{
@@ -24,22 +24,6 @@ const updateCarState = (id_marque,id_vehicule,state)=>{
         
         })
 } 
-
-
-const sendNotification = (payload,uid)=>{
-        
-        return admin.firestore().collection("automobilistes")
-                     .doc(uid)
-                     .get()
-                     .then(doc => {
-                        let token = doc.data().instance_token
-                        return admin.messaging().sendToDevice(token, payload);
-                     })
-                     .catch((err)=>{
-                         console.log(err);
-                         return 0;
-                     })
-}
 
 
 const onOrderCreated = functions.firestore.document('commandes/{id_commande}')
@@ -72,6 +56,7 @@ const onOrderUpdated = functions.firestore.document('commandes/{id_commande}')
               }
 
              
+                data.id = order.id
               return  admin.firestore().collection("versions")
                            .doc(order.id_version)
                            .get()
@@ -95,7 +80,7 @@ const onOrderUpdated = functions.firestore.document('commandes/{id_commande}')
                            .then(doc => {
                                        
                                 data.photo =  doc.data().url
-                                return sendNotification( {data} , order.id_automobiliste)
+                                return utils.sendNotification( {data} , order.id_automobiliste)
                                 
                            })
                            .then(()=>{

@@ -17,6 +17,8 @@ const databaseOrdersTriggers = require("./tirggers/database/commandes")
 const databaseCarProviderTriggers = require("./tirggers/database/fabricants")
 const databaseBrandTriggers = require("./tirggers/database/marques")
 const databaseModelsTriggers = require("./tirggers/database/modeles")
+const databaseOffersTriggers = require("./tirggers/database/offres")
+
 
 //intialize the firebase admin sdk
 admin.initializeApp(functions.config().firebase);
@@ -63,10 +65,14 @@ exports.storageTrigger = functions.storage.object().onFinalize((object)=>{
 
 })
 
-
-
+/**
+ * SayaraDZ database triggers modules
+ */
 exports.onOrderCreated = databaseOrdersTriggers.onOrderCreated
 exports.onOrderUpdated = databaseOrdersTriggers.onOrderUpdated
 exports.onCarProviderUpdated =  databaseCarProviderTriggers.onCarProviderUpdated
 exports.onBrandDeleted = databaseBrandTriggers.onBrandDeleted
 exports.onModelDeleted = databaseModelsTriggers.onModelDeleted
+exports.onModelDeleted = databaseModelsTriggers.onModelDeleted
+exports.onOfferCreated = databaseOffersTriggers.onOfferCreated
+exports.onOfferUpdated = databaseOffersTriggers.onOfferUpdated

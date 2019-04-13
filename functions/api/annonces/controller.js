@@ -150,6 +150,7 @@ const getAnnounces = (req,res)=>{
                                     docs.forEach(doc => {
                                         let data   =  doc.data() 
                                         extras.automobilistes[data.id] = {
+                                            id:data.id,
                                             email:data.email,
                                             nom: data.nom,
                                             photoURL: data.photoURL
@@ -163,6 +164,7 @@ const getAnnounces = (req,res)=>{
                                     docs.forEach(doc => {
                                         let data = doc.data()
                                         extras.marques[data.id] = {
+                                            id:data.id,
                                             nom: data.nom, 
                                             url: data.url
                                         }
@@ -175,6 +177,7 @@ const getAnnounces = (req,res)=>{
                                     docs.forEach(doc => {
                                         let data   =  doc.data() 
                                         extras.modeles[data.id] = {
+                                            id:data.id,
                                             nom: data.nom,
                                         }
                                     })

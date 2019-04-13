@@ -4,6 +4,7 @@ const admin = require("firebase-admin");
 const setVersion= (req,res)=>{
 
     const body  = req.body        
+   
     const data = {
         code: body.code,
         id_marque: body.id_marque,
@@ -28,12 +29,11 @@ const setVersion= (req,res)=>{
                         }else{
                             const ref  = admin.firestore().collection("versions")
                                               .doc()
-
                             data.id = ref.id
                             return ref.set(data)
-                        
                         }
                     }).then((result) => {
+
                         if(result ==0)
                           res.status(500).json({error: "version aleardy exist"})
                         else 
@@ -54,6 +54,7 @@ const getVersions = (req,res)=>{
 
     let data = [];
     let snapshotPromise;
+    
     let ref = admin.firestore()
                     .collection("versions")
             
