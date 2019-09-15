@@ -35,7 +35,7 @@ const setVersion= (req,res)=>{
                     }).then((result) => {
 
                         if(result ==0)
-                          res.status(500).json({error: "version aleardy exist"})
+                          res.status(409).json({error: "version aleardy exist"})
                         else 
                           res.status(200).json(data)
                     

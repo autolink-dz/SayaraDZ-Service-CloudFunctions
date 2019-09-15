@@ -56,7 +56,7 @@ const onOfferUpdated = functions.firestore.document('offres/{id_offre}')
         const oldData = change.before.data();
         const data = {}
 
-        if(offer.etat == oldData.etat) return //the offer state didn't change
+        if(offer.etat == oldData.etat) return 0;//the offer state didn't change
 
        
         
@@ -68,7 +68,7 @@ const onOfferUpdated = functions.firestore.document('offres/{id_offre}')
                     data.validation = String(true)
                     break;
             default:
-                   return
+                   return 0;
         }
 
         data.id = offer.id
@@ -104,7 +104,7 @@ const onOfferUpdated = functions.firestore.document('offres/{id_offre}')
                         data.contact = owner.email
                         data.android_channel_id = "1"
 
-                        return utils.sendNotification({ data },offer.id_proprietaire)
+                        return utils.sendNotification({ data },offer.id_client)
                         
                     })
                     .then((res)=>{

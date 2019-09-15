@@ -31,7 +31,7 @@ const setModel= (req,res)=>{
                     })
                     .then((result) => {
                         if(result ==0)
-                          res.status(500).json({error: "model aleardy exist"})
+                          res.status(409).json({error: "model aleardy exist"})
                         else 
                           res.status(200).json(data)
                     

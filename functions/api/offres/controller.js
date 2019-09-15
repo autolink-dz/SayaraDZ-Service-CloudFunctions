@@ -18,6 +18,7 @@ const setOffer = (req,res)=>{
                                .doc()
     
     data.id = ref.id
+
    
     return ref.set(data)
               .then((result)=>{

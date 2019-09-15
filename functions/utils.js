@@ -7,8 +7,8 @@ const orderState = {
 }
 
 const stockItem  = {
-    "0": "couleur",
-    "1": "version",
+    "0": "version",
+    "1": "couleur",
     "2": "option"
 }
 

@@ -56,7 +56,6 @@ const onOrderUpdated = functions.firestore.document('commandes/{id_commande}')
               }
 
              
-                data.id = order.id
               return  admin.firestore().collection("versions")
                            .doc(order.id_version)
                            .get()
@@ -64,6 +63,7 @@ const onOrderUpdated = functions.firestore.document('commandes/{id_commande}')
                                 
                                 let version = doc.data()
                                 data = {
+                                        id: order.id,
                                         android_channel_id: "0",
                                         validation:String(validation),
                                         version: version.nom,

@@ -69,12 +69,11 @@ const getAnnounces = (req,res)=>{
 
     let ref = admin.firestore()
                     .collection("annonces")
-            
+        
    
     if(id_marque) ref = ref.where("id_marque","==",id_marque)
     if(id_modele) ref = ref.where("id_modele","==",id_modele)
     if(id_version) ref = ref.where("id_version","==",id_version)
-    if(id_proprietaire) ref = ref.where("id_proprietaire","==",id_proprietaire)
     if(disponible) ref = ref.where("disponible","==",(disponible == "true"))
     if(prix_max) ref = ref.where("prix_min","<=",parseFloat(prix_max))
     if(prix_min) ref = ref.where("prix_min",">=",parseFloat(prix_min))
@@ -97,11 +96,15 @@ const getAnnounces = (req,res)=>{
 
 
 
-
      return  snapshotPromise.then(snapshot => {
                                      result = snapshot
-                                     snapshot.docs.forEach(doc => {
-                                                
+                                     
+                                     let docs = snapshot.docs.filter(doc=>{
+                                        let annonce = doc.data()
+                                        return annonce.id_proprietaire != id_proprietaire
+                                     })
+
+                                     docs.forEach(doc => {           
                                                 let annonce = doc.data()
                                                  annonce.date = annonce.date.toDate()
                                                 
@@ -138,6 +141,7 @@ const getAnnounces = (req,res)=>{
                                             })
                 
                                             versions.forEach(id=>{
+                                                
                                                 versionsDocsPromise.push(admin.firestore().collection("versions")
                                                                     .doc(id)
                                                                     .get()) 
@@ -185,9 +189,11 @@ const getAnnounces = (req,res)=>{
                                     return Promise.all(versionsDocsPromise)                           
                                     })
                                    .then(docs => {
-                        
+                                        
                                     docs.forEach(doc => {
+        
                                         let data   =  doc.data() 
+                                      
                                         extras.versions[data.id] = {
                                             id:data.id,
                                             nom: data.nom,
@@ -201,6 +207,8 @@ const getAnnounces = (req,res)=>{
 
                                    })
                                  .catch((err)=>{
+                                     console.log(err);
+                                     
                                     res.status(500).send(err)
                                     return 0;
                                 })
